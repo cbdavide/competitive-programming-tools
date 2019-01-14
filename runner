@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+PREPROCESSOR_VAR="CBDAVIDES"
+BAR="----------------------------------------------------------------"
+
+echo "Compilando A.cpp"
+echo $BAR
+
+g++ A.cpp --std=c++14 -D$PREPROCESSOR_VAR
+COMPILE_CODE=$?
+
+if [[ COMPILE_CODE -ne 0 ]]; then
+    echo 'Compilation error'
+    echo $BAR
+    exit 1
+fi
+
+echo "Running Code"
+echo $BAR
+
+timeout 1s ./a.out < input
+EXCECUTION_CODE=$?
+
+if [[ EXCECUTION_CODE -ne 0 ]]; then
+    echo -e '\nExecution interrupted, due some of the following reasons:'
+    echo -e '    * Runtime Error'
+    echo -e '    * Time Limit Exceeded'
+    echo $BAR
+    exit 1
+fi
+
+echo $BAR
+echo "END OF OUTPUT"

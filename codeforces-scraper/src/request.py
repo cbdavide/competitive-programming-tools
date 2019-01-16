@@ -15,10 +15,3 @@ def get_html(url):
             return None
 
         return req.content
-
-
-if __name__ == '__main__':
-
-    print(
-        get_html('https://codeforces.com/problemset/problem/1099/Z')
-    )

@@ -62,22 +62,3 @@ def get_problem_list(raw_html, contest_id):
     for problem in problems_table:
         url, id = extract(problem)
         yield Problem(id, url, contest_id)
-
-
-if __name__ == '__main__':
-
-    from request import get_html
-
-    url = 'https://codeforces.com/contest/1091/problem/G'
-    raw_html = get_html(url)
-
-    problems = get_test_cases(raw_html)
-
-    for problem in problems:
-        print(problem)
-
-    # url = 'https://codeforces.com/contest/1100'
-    # raw_html = get_html(url)
-    # problems = get_problem_list(raw_html)
-    # for problem in problems:
-    #     print(problem)

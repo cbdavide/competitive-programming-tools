@@ -23,14 +23,12 @@ def get_test_cases(raw_html):
             else:
                 yield element
 
-
     def extract(html, selector):
 
         for tag in html.select(selector):
             data = list(tag.children)[1].contents
             data = clean(data)
             yield ''.join(data).strip('\n')
-
 
     html = BeautifulSoup(raw_html, 'html.parser')
 

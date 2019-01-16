@@ -16,6 +16,7 @@ def get_html(url):
 
         return req.content
 
+
 if __name__ == '__main__':
 
     print(

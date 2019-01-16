@@ -10,7 +10,7 @@ class TestCase:
         cad = "Input:\n{}\nOutput:\n{}\n{sep}".format(
             self.input,
             self.output,
-            sep = 50 * '_'
+            sep=50 * '_'
         )
 
         return cad

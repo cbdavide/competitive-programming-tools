@@ -1,10 +1,9 @@
 import os
 
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 
-INPUT_SUFFIX= 'input'
+INPUT_SUFFIX = 'input'
 OUTPUT_SUFFIX = 'output'
 FILE_NAME_FORMAT = "{}_{}.{}"
 

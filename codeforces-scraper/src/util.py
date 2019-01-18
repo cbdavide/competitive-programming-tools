@@ -26,3 +26,12 @@ class Problem:
 
     def __str__(self):
         return "{}: {}".format(self.id, self.url)
+
+
+def print_problem_list(problems):
+
+    problems_id = [p.id for p in problems]
+    print("Contest {} has the following problems: {}".format(
+        problems[0].contest,
+        ", ".join(problems_id)
+    ))

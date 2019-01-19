@@ -1,4 +1,5 @@
 
+from itertools import repeat
 from concurrent.futures import ThreadPoolExecutor
 
 from src.os import create_folder
@@ -15,10 +16,10 @@ from src.scraping import get_problem_list
 CODEFORCES_BASE_URL = 'https://codeforces.com'
 
 
-def download_cases(problem):
+def download_cases(problem, kwargs):
 
     def log():
-        return "Downloading test cases of problem {1}/{0}".format(
+        return "Downloading test cases for problem {1}/{0}".format(
             problem.id,
             problem.contest
         )
@@ -37,17 +38,17 @@ def download_cases(problem):
     for test_case in test_cases:
         problem.testCases.append(test_case)
 
-    save_problem_cases(path, problem)
+    save_problem_cases(path, problem, **kwargs)
 
 
-def create_contest(contest_id):
+def create_contest(contest_id, **kwargs):
 
     contest_url = "{}/contest/{}".format(
         CODEFORCES_BASE_URL,
         contest_id
     )
 
-    create_folder(contest_id)
+    create_folder(contest_id, **kwargs)
 
     print("Getting the list of problems...")
     problem_list_html = get_html(contest_url)
@@ -55,10 +56,11 @@ def create_contest(contest_id):
     print_problem_list(problem_list)
 
     with ThreadPoolExecutor(max_workers=5) as executor:
-        executor.map(download_cases, problem_list)
+        ex = executor.map(download_cases, problem_list, repeat(kwargs))
+        # TODO: Handle possible errors
 
 
-def create_problems(plain_problems):
+def create_problems(plain_problems, **kwargs):
 
     def to_problem_list():
 
@@ -74,7 +76,7 @@ def create_problems(plain_problems):
     problems = list(to_problem_list())
 
     for p in problems:
-        create_folder(p.contest)
+        create_folder(p.contest, **kwargs)
 
     with ThreadPoolExecutor(max_workers=5) as executor:
-        executor.map(download_cases, problems)
+        executor.map(download_cases, problems, repeat(kwargs))

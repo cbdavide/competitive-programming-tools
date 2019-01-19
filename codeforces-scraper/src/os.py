@@ -1,5 +1,5 @@
 import os
-
+from itertools import repeat
 from concurrent.futures import ThreadPoolExecutor
 
 
@@ -8,20 +8,29 @@ OUTPUT_SUFFIX = 'output'
 FILE_NAME_FORMAT = "{}_{}.{}"
 
 
-def create_folder(path):
-
-    if not os.path.exists(path):
-        os.mkdir(path)
+def exists(path):
+    return os.path.exists(path)
 
 
-def create_file(test_case):
-    with open(test_case[0], 'w') as file:
+def create_folder(path, **kwargs):
+    base_path = kwargs.get('base_path', '')
+    full_path = os.path.join(base_path, path)
+
+    if not os.path.exists(full_path):
+        os.mkdir(full_path)
+
+
+def create_file(test_case, kwargs):
+    base_path = kwargs.get('base_path', '')
+    full_path = os.path.join(base_path, test_case[0])
+
+    with open(full_path, 'w') as file:
 
         for line in test_case[1]:
             file.write(line)
 
 
-def save_problem_cases(path, problem):
+def save_problem_cases(path, problem, **kwargs):
 
     def create_path(problem_id, consecutive, type):
         file_name = FILE_NAME_FORMAT.format(
@@ -54,7 +63,8 @@ def save_problem_cases(path, problem):
             yield input_file, test_case.input
             yield output_file, test_case.output
 
-    create_folder(path)
+    create_folder(path, **kwargs)
 
     with ThreadPoolExecutor(max_workers=5) as executor:
-        executor.map(create_file, to_list())
+        ex = executor.map(create_file, to_list(), repeat(kwargs))
+        # TODO: Handle possible errors

@@ -24,23 +24,38 @@ from src.os import exists
 from src.main import create_contest
 from src.main import create_problems
 
+VALIDATORS = dict()
 
+
+def register(func):
+    VALIDATORS[func.__name__] = func
+    return func
+
+
+def validate(func):
+    def wrapper(*args, **kwargs):
+
+        for k, v in VALIDATORS.items():
+            v(*args)
+
+        return func(*args, **kwargs)
+    return wrapper
+
+
+@register
+def validate_output_path(arguments):
+    if arguments['--output'] and not exists(arguments['--output']):
+        raise Exception('Output path does not exist...')
+
+
+@register
+def validate_template_path(arguments):
+    if arguments['--template'] and not exists(arguments['--template']):
+        raise Exception('Template file does not exist...')
+
+
+@validate
 def cli(arguments):
-
-    def validate():
-        '''
-            This function raises an exception in case that the arguments
-            are not consistent.
-        '''
-
-        if arguments['--output'] and not exists(arguments['--output']):
-            raise Exception('Output path does not exist...')
-
-        if arguments['--template'] and not exists(arguments['--template']):
-            raise Exception('Template file does not exist...')
-
-    validate()
-
     options = {}
     if arguments['--output']:
         options['base_path'] = arguments['--output']

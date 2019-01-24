@@ -39,7 +39,7 @@ def save_problem_cases(path, problem, **kwargs):
             INPUT_SUFFIX if type else OUTPUT_SUFFIX
         )
 
-        return "{}/{}".format(path, file_name)
+        return f"{path}/{file_name}"
 
     def to_list():
 

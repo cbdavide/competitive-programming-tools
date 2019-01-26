@@ -57,8 +57,12 @@ def validate_template_path(arguments):
 @validate
 def cli(arguments):
     options = {}
+
     if arguments['--output']:
         options['base_path'] = arguments['--output']
+
+    if arguments['--template']:
+        options['template_path'] = arguments['--template']
 
     if arguments['contest'] and arguments['<contest_id>']:
         create_contest(arguments['<contest_id>'], **options)

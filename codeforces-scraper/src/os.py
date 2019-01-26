@@ -30,6 +30,22 @@ def create_file(test_case, kwargs):
             file.write(line)
 
 
+def copy_file(input_file, output_path, problem_id, **kwargs):
+    _, ext = os.path.splitext(input_file)
+
+    base_path = kwargs.get('base_path', '')
+    output_path = os.path.join(base_path, output_path, problem_id)
+
+    output_path = f"{output_path}{ext}"
+
+    with open(input_file) as template:
+
+        with open(output_path, 'w') as output_file:
+
+            for line in template:
+                output_file.write(line)
+
+
 def save_problem_cases(path, problem, **kwargs):
 
     def create_path(problem_id, consecutive, type):
@@ -64,6 +80,11 @@ def save_problem_cases(path, problem, **kwargs):
             yield output_file, test_case.output
 
     create_folder(path, **kwargs)
+
+    template_path = kwargs.get('template_path', None)
+
+    if template_path:
+        copy_file(template_path, path, problem.id, **kwargs)
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         ex = executor.map(create_file, to_list(), repeat(kwargs))

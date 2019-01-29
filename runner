@@ -3,10 +3,20 @@
 PREPROCESSOR_VAR="CBDAVIDES"
 BAR="----------------------------------------------------------------"
 
-echo "Compilando A.cpp"
+PROBLEM=$1
+
+if [ ! -d "$PROBLEM" ]; then
+    echo "Error: Problem $PROBLEM does not exits in the current folder."
+    exit 1
+fi
+
+echo "Compilando source code of problem $PROBLEM..."
 echo $BAR
 
-g++ A.cpp --std=c++14 -D$PREPROCESSOR_VAR
+BINARY="$PROBLEM/a.out"
+CODE=$PROBLEM/$PROBLEM.cpp
+
+g++ $CODE --std=c++14 -D$PREPROCESSOR_VAR -o $BINARY
 COMPILE_CODE=$?
 
 if [[ COMPILE_CODE -ne 0 ]]; then
@@ -18,16 +28,21 @@ fi
 echo "Running Code"
 echo $BAR
 
-timeout 1s ./a.out < input
-EXCECUTION_CODE=$?
+for test_case in $PROBLEM/$PROBLEM_*.input; do
 
-if [[ EXCECUTION_CODE -ne 0 ]]; then
-    echo -e '\nExecution interrupted, due some of the following reasons:'
-    echo -e '    * Runtime Error'
-    echo -e '    * Time Limit Exceeded'
-    echo $BAR
-    exit 1
-fi
+    echo "$test_case"
+    timeout 1s ./$BINARY < $test_case
+    EXCECUTION_CODE=$?
+
+    if [[ EXCECUTION_CODE -ne 0 ]]; then
+        echo -e '\nExecution interrupted, due some of the following reasons:'
+        echo -e '    * Runtime Error'
+        echo -e '    * Time Limit Exceeded'
+        echo $BAR
+        exit 1
+    fi
+
+done
 
 echo $BAR
 echo "END OF OUTPUT"

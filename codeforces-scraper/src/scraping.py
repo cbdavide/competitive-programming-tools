@@ -13,6 +13,68 @@ OUTPUT_CSS_CLASS = '.output'
 PROBLEMS_CSS_CLASS = '.id'
 
 
+class Scraper:
+
+    def __init__(self, raw_html):
+        self.html = BeautifulSoup(raw_html, 'html.parser')
+
+
+class ProblemScraper(Scraper):
+
+    def _clean_content(self, data):
+        for line in data:
+            if isinstance(element, Tag):
+                if element.name == 'br':
+                    yield '\n'
+            else:
+                yield element
+
+    def _extract_content(self, selector):
+        for element in self.html.select(selector):
+
+            data = list(element.children)[1]
+            cleaned_data = self._clean_content(data.contents)
+
+            yield ''.join(cleaned_data).strip('\n')
+
+    def scrap(self):
+        inputs = self._extract_content(INPUT_CSS_CLASS)
+        outputs = self._extract_content(OUTPUT_CSS_CLASS)
+
+        return [TestCase(t[0], t[1]) for t in zip(inputs, outputs)]
+
+
+class ContestScraper(Scraper):
+
+    PATTERN = re.compile(r'[\\rn\s]')
+
+    def _clean(self, data):
+        clean = string.encode('unicode_escape')
+        clean = clean.decode('utf-8')
+
+        problem_id = pattern.subn('', clean)
+
+        return problem_id[0]
+
+    def _extract_content(self, selector):
+        problems =  self.html.select(selector)
+
+        for problem in problems:
+
+            children = list(problem.children)
+            anchor_element = children[1]
+
+            anchor_url = anchor_element['href']
+            problem_id = self._clean(anchor_element.contents[0])
+
+            yield problem_id, anchor_url
+
+    def scrap(self):
+        problems = self._extract_content(PROBLEMS_CSS_CLASS)
+
+        return [Problem(x[0], x[1]) for x in problems]
+
+
 def get_test_cases(raw_html):
 
     def clean(elements):

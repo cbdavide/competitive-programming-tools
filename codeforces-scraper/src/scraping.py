@@ -48,7 +48,7 @@ class ContestScraper(Scraper):
 
     PATTERN = re.compile(r'[\\rn\s]')
 
-    def _clean(self, data):
+    def _clean_content(self, data):
         clean = string.encode('unicode_escape')
         clean = clean.decode('utf-8')
 
@@ -65,7 +65,7 @@ class ContestScraper(Scraper):
             anchor_element = children[1]
 
             anchor_url = anchor_element['href']
-            problem_id = self._clean(anchor_element.contents[0])
+            problem_id = self._clean_content(anchor_element.contents[0])
 
             yield problem_id, anchor_url
 

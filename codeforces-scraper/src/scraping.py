@@ -23,11 +23,11 @@ class ProblemScraper(Scraper):
 
     def _clean_content(self, data):
         for line in data:
-            if isinstance(element, Tag):
-                if element.name == 'br':
+            if isinstance(line, Tag):
+                if line.name == 'br':
                     yield '\n'
             else:
-                yield element
+                yield line
 
     def _extract_content(self, selector):
         for element in self.html.select(selector):
@@ -49,15 +49,15 @@ class ContestScraper(Scraper):
     PATTERN = re.compile(r'[\\rn\s]')
 
     def _clean_content(self, data):
-        clean = string.encode('unicode_escape')
+        clean = data.encode('unicode_escape')
         clean = clean.decode('utf-8')
 
-        problem_id = pattern.subn('', clean)
+        problem_id = self.PATTERN.subn('', clean)
 
         return problem_id[0]
 
     def _extract_content(self, selector):
-        problems =  self.html.select(selector)
+        problems = self.html.select(selector)
 
         for problem in problems:
 

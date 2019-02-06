@@ -14,6 +14,30 @@ from src.scraping import get_problem_list
 
 CODEFORCES_BASE_URL = 'https://codeforces.com'
 
+class ContestCreator:
+
+    CONTEST_BASE_URL = f'{CODEFORCES_BASE_URL}/contest'
+
+    def __init__(self, scraperFactory, contest_id):
+
+        self.contestScraperClass = scraperFactory.contestScraper()
+        self.problemScraperClass = scraperFactory.problemScraper()
+
+        self.contest_url = f"{self.CONTEST_BASE_URL}/{contest_id}"
+
+    def create_contest(self):
+
+        contest_html = get_html(self.contest_url)
+        contestScraper = self.contestScraperClass(contest_html)
+
+        problems = contestScraper.scrap()
+
+        for problem in problems:
+            print(problem)
+
+    def create_problem(self, problem_url):
+        pass
+
 
 def problem_log(*args, **kwargs):
     print(

@@ -18,11 +18,10 @@ class TestCase:
 
 class Problem:
 
-    def __init__(self, id, url, contest_id):
+    def __init__(self, id, url):
         self.id = id
         self.url = url
         self.testCases = []
-        self.contest = contest_id
 
     def __str__(self):
-        return "{}: {}".format(self.id, self.url)
+        return f"{self.id}: {self.url}"

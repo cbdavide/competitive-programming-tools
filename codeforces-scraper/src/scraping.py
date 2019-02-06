@@ -18,6 +18,9 @@ class Scraper:
     def __init__(self, raw_html):
         self.html = BeautifulSoup(raw_html, 'html.parser')
 
+    def scrap(self):
+        raise Exception('Not Implemented')
+
 
 class ProblemScraper(Scraper):
 
@@ -73,6 +76,17 @@ class ContestScraper(Scraper):
         problems = self._extract_content(PROBLEMS_CSS_CLASS)
 
         return [Problem(x[0], x[1]) for x in problems]
+
+
+class CodeforcesScraperFactory:
+
+    @classmethod
+    def contestScraper(cls):
+        return ContestScraper
+
+    @classmethod
+    def problemScraper(cls):
+        return ProblemScraper
 
 
 def get_test_cases(raw_html):

@@ -18,17 +18,17 @@ class ContestCreator:
 
     CONTEST_BASE_URL = f'{CODEFORCES_BASE_URL}/contest'
 
-    def __init__(self, scraperFactory, contest_id):
+    def __init__(self, ScraperFactory, contest_id):
 
-        self.contestScraperClass = scraperFactory.contestScraper()
-        self.problemScraperClass = scraperFactory.problemScraper()
+        self.ContestScraperClass = ScraperFactory.contestScraper()
+        self.ProblemScraperClass = ScraperFactory.problemScraper()
 
         self.contest_url = f"{self.CONTEST_BASE_URL}/{contest_id}"
 
     def create_contest(self):
 
         contest_html = get_html(self.contest_url)
-        contestScraper = self.contestScraperClass(contest_html)
+        contestScraper = self.ContestScraperClass(contest_html)
 
         problems = contestScraper.scrap()
 

@@ -80,12 +80,12 @@ class ContestScraper(Scraper):
 
 class CodeforcesScraperFactory:
 
-    @classmethod
-    def contestScraper(cls):
+    @staticmethod
+    def contestScraper():
         return ContestScraper
 
-    @classmethod
-    def problemScraper(cls):
+    @staticmethod
+    def problemScraper():
         return ProblemScraper
 
 

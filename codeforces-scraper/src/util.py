@@ -1,9 +1,9 @@
 
 class TestCase:
 
-    def __init__(self, input, output):
-        self.input = input
-        self.output = output
+    def __init__(self, input_text, output_text):
+        self.input = input_text
+        self.output = output_text
 
     def __str__(self):
 
@@ -18,8 +18,8 @@ class TestCase:
 
 class Problem:
 
-    def __init__(self, id, url):
-        self.id = id
+    def __init__(self, problem_id, url):
+        self.id = problem_id
         self.url = url
         self.testCases = []
 

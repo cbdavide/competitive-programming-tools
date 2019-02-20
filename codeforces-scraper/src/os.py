@@ -5,7 +5,56 @@ from concurrent.futures import ThreadPoolExecutor
 
 INPUT_SUFFIX = 'input'
 OUTPUT_SUFFIX = 'output'
-FILE_NAME_FORMAT = "{}_{}.{}"
+FILE_NAME_FORMAT = "{:02d}.{}"
+
+
+class Persistence:
+
+    def __init__(self, contest_id, **kwargs):
+        self.template_file = kwargs.get('template', None)
+
+        base_path = kwargs.get('base_path', '')
+        self.path = os.path.join(base_path, contest_id)
+
+    def save(self, problem):
+        raise Exception('Not Implemented')
+
+
+class DiskPersistence(Persistence):
+
+    @staticmethod
+    def _save_file(content, path):
+        with open(path, 'w') as file:
+            for line in content:
+                file.write(line)
+
+    def _save_test_case(self, test_case, consecutive, problem_id):
+
+        # Saving test's case input
+        file_name = FILE_NAME_FORMAT.format(consecutive, INPUT_SUFFIX)
+        test_path = os.path.join(self.path, problem_id, file_name)
+
+        self._save_file(test_case.input, test_path)
+
+        # Saving test's case output
+        file_name = FILE_NAME_FORMAT.format(consecutive, OUTPUT_SUFFIX)
+        test_path = os.path.join(self.path, problem_id, file_name)
+
+        self._save_file(test_case.output, test_path)
+
+    def save(self, problem):
+        problem_path = os.path.join(self.path, problem.id)
+
+        # Make sure that the container folder exists
+        os.makedirs(problem_path)
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            ex = executor.map(
+                self._save_test_case,
+                problem.testCases,
+                range(len(problem.testCases)),
+                repeat(problem.id)
+            )
 
 
 def exists(path):

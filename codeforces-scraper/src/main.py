@@ -2,14 +2,15 @@
 from itertools import repeat
 from concurrent.futures import ThreadPoolExecutor
 
-from src.os import create_folder
-from src.os import save_problem_cases
+from .os import create_folder
+from .os import save_problem_cases
+from .os import DiskPersistence
 
-from src.util import Problem
-from src.request import get_html
+from .util import Problem
+from .request import get_html
 
-from src.scraping import get_test_cases
-from src.scraping import get_problem_list
+from .scraping import get_test_cases
+from .scraping import get_problem_list
 
 
 CODEFORCES_BASE_URL = 'https://codeforces.com'
@@ -21,17 +22,21 @@ class ContestCreator:
 
     def __init__(self, ScraperFactory, contest_id):
 
+        self.contest_id = contest_id
+
         self.ContestScraperClass = ScraperFactory.contestScraper()
         self.ProblemScraperClass = ScraperFactory.problemScraper()
+
+        self.persistence = DiskPersistence(contest_id)
 
         self.contest_url = f"{self.CONTEST_BASE_URL}/{contest_id}"
 
     def create_contest(self):
 
         contest_html = get_html(self.contest_url)
-        contestScraper = self.ContestScraperClass(contest_html)
+        contest_scraper = self.ContestScraperClass(contest_html)
 
-        problems = contestScraper.scrap()
+        problems = contest_scraper.scrap()
 
         with ThreadPoolExecutor(max_workers=5) as executor:
             ex = executor.map(self.create_problem, problems)
@@ -41,9 +46,11 @@ class ContestCreator:
         problem_url = f"{CODEFORCES_BASE_URL}{problem.url}"
 
         problem_html = get_html(problem_url)
-        problemScraper = self.ProblemScraperClass(problem_html)
+        problem_scraper = self.ProblemScraperClass(problem_html)
 
-        problem.testCases = problemScraper.scrap()
+        problem.testCases = problem_scraper.scrap()
+
+        self.persistence.save(problem)
 
 
 def problem_log(*args, **kwargs):
